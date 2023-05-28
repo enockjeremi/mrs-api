@@ -11,7 +11,7 @@ import {
 import {
   CreateCategoryDto,
   UpdateCategoryDto,
-} from 'src/ppus/faults/DTOS/categories.dtos';
+} from 'src/ppus/faults/DTOS/categories.dto';
 import { CategoriesService } from '../services/categories.service';
 
 @Controller('categories')

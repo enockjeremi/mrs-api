@@ -1,4 +1,4 @@
-export class PPU {
+export class User {
   id: number;
   email: string;
   password: string;
