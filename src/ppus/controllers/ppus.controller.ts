@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ParseIntPipe } from 'src/common/parse-int/parse-int.pipe';
-import { CreatePPUDto, UpdatePPUDto } from './../DTOS/ppus.dtos';
+import { CreatePPUDto, UpdatePPUDto } from '../DTOS/ppus.dto';
 import { PpusService } from 'src/ppus/services/ppus.service';
 
 @Controller('ppus')

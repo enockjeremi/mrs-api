@@ -11,7 +11,7 @@ import {
 import {
   CreateFaultDto,
   UpdateFaultDto,
-} from 'src/ppus/faults/DTOS/faults.dtos';
+} from 'src/ppus/faults/DTOS/faults.dto';
 import { FaultsService } from '../services/faults.service';
 
 @Controller('faults')

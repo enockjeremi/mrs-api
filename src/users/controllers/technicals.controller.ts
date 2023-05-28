@@ -11,7 +11,7 @@ import {
 import {
   CreateTechnicalDto,
   UpdateTechnicalDto,
-} from 'src/users/DTOS/technicals.dtos';
+} from 'src/users/DTOS/technicals.dto';
 import { TechnicalsService } from './../services/technicals.service';
 
 @Controller('technical')

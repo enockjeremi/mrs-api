@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateTechnicalDto,
   UpdateTechnicalDto,
-} from './../DTOS/technicals.dtos';
+} from '../DTOS/technicals.dto';
 
 @Injectable()
 export class TechnicalsService {
