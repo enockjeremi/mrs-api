@@ -8,8 +8,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateFaultDto, UpdateFaultDto } from 'src/DTOS/faults.dtos';
-import { FaultsService } from 'src/services/faults/faults.service';
+import {
+  CreateFaultDto,
+  UpdateFaultDto,
+} from 'src/ppus/faults/DTOS/faults.dtos';
+import { FaultsService } from '../services/faults.service';
 
 @Controller('faults')
 export class FaultsController {

@@ -9,21 +9,21 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  CreateTechnicalDto,
-  UpdateTechnicalDto,
-} from 'src/DTOS/technicals.dtos';
-import { TechnicalsService } from 'src/services/technicals/technicals.service';
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from 'src/ppus/faults/DTOS/categories.dtos';
+import { CategoriesService } from '../services/categories.service';
 
-@Controller('technical')
-export class TechnicalsController {
-  constructor(private services: TechnicalsService) {}
+@Controller('categories')
+export class CategoriesController {
+  constructor(private services: CategoriesService) {}
 
   @Get()
   get() {
     return this.services.findAll();
   }
   @Post()
-  create(@Body() payload: CreateTechnicalDto) {
+  create(@Body() payload: CreateCategoryDto) {
     return this.services.create(payload);
   }
   @Get(':id')
@@ -32,7 +32,7 @@ export class TechnicalsController {
   }
   @Put(':id')
   update(
-    @Body() payload: UpdateTechnicalDto,
+    @Body() payload: UpdateCategoryDto,
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.services.update(id, payload);

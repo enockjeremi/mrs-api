@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePPUDto, UpdatePPUDto } from 'src/DTOS/ppus.dtos';
-import { PPU } from 'src/entities/ppu.entity';
+import { CreatePPUDto, UpdatePPUDto } from '../DTOS/ppus.dtos';
+import { PPU } from 'src/ppus/entities/ppu.entity';
 
 @Injectable()
 export class PpusService {

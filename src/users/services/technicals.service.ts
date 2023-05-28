@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto, UpdateCategoryDto } from 'src/DTOS/categories.dtos';
+import {
+  CreateTechnicalDto,
+  UpdateTechnicalDto,
+} from './../DTOS/technicals.dtos';
 
 @Injectable()
-export class CategoriesService {
-  create(payload: CreateCategoryDto) {
+export class TechnicalsService {
+  create(payload: CreateTechnicalDto) {
     return payload;
   }
 
@@ -15,7 +18,7 @@ export class CategoriesService {
     return id;
   }
 
-  update(id: number, payload: UpdateCategoryDto) {
+  update(id: number, payload: UpdateTechnicalDto) {
     return { id, payload };
   }
 
