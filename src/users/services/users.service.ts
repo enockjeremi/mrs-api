@@ -1,52 +1,52 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../DTOS/users.dto';
-import { Order } from '../entities/order.entity';
 import { FaultsService } from 'src/ppus/faults/services/faults.service';
 import { User } from '../entities/users.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  constructor(private faultsService: FaultsService) {}
-  private counterId = 1;
+  constructor(
+    private faultsService: FaultsService,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
 
-  private users: User[] = [
-    {
-      id: 1,
-      email: 'email@email.com',
-      password: '123456',
-      role: 'admin',
-    },
-  ];
-
-  create(payload: CreateUserDto) {
-    return payload;
-  }
-  findAll() {
-    return this.users;
-  }
-
-  findOne(id: number) {
-    const user = this.users.find((user) => user.id == id);
-    if (!user) {
-      throw new NotFoundException('user not found.');
+  async create(payload: CreateUserDto) {
+    try {
+      const newUser = new this.userModel(payload);
+      return await newUser.save();
+    } catch (error) {
+      throw new NotFoundException('Not Found!');
     }
-    return user;
+  }
+  async findAll() {
+    return await this.userModel.find({});
   }
 
-  update(id: number, payload: UpdateUserDto) {
-    return { id, payload };
+  async findOne(id: string) {
+    const oneUser = await this.userModel.findById({ _id: id }).exec();
+    if (!oneUser) {
+      throw new NotFoundException('Not Found!');
+    }
+    return oneUser;
   }
 
-  delete(id: number) {
-    return id;
+  async update(id: string, payload: UpdateUserDto) {
+    const updateUser = await this.userModel
+      .findByIdAndUpdate({ _id: id }, { $set: payload }, { new: true })
+      .exec();
+    if (!updateUser) {
+      throw new NotFoundException('Not Found!');
+    }
+    return updateUser;
   }
 
-  getOrdersByUsers(id: number): Order {
-    const user = this.findOne(id);
-    return {
-      date: new Date(),
-      user: user,
-      faults: this.faultsService.findAll(),
-    };
+  async delete(id: string) {
+    const deleteUser = await this.findOne(id);
+    if (!deleteUser) {
+      throw new NotFoundException('User not found');
+    }
+    return await this.userModel.findByIdAndDelete({ _id: id }).exec();
   }
 }

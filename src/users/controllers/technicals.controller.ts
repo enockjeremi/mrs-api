@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -13,32 +12,35 @@ import {
   UpdateTechnicalDto,
 } from 'src/users/DTOS/technicals.dto';
 import { TechnicalsService } from './../services/technicals.service';
+import { ApiTags } from '@nestjs/swagger';
+import { MongoIdPipe } from 'src/common/mongo-id/mongo-id.pipe';
 
+@ApiTags('Technical')
 @Controller('technical')
 export class TechnicalsController {
-  constructor(private services: TechnicalsService) {}
+  constructor(private technicalServices: TechnicalsService) {}
 
   @Get()
   get() {
-    return this.services.findAll();
+    return this.technicalServices.findAll();
   }
   @Post()
   create(@Body() payload: CreateTechnicalDto) {
-    return this.services.create(payload);
+    return this.technicalServices.create(payload);
   }
   @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: number) {
-    return this.services.findOne(id);
+  getOne(@Param('id', MongoIdPipe) id: string) {
+    return this.technicalServices.findOne(id);
   }
   @Put(':id')
   update(
     @Body() payload: UpdateTechnicalDto,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', MongoIdPipe) id: string,
   ) {
-    return this.services.update(id, payload);
+    return this.technicalServices.update(id, payload);
   }
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number) {
-    return this.services.delete(id);
+  delete(@Param('id', MongoIdPipe) id: string) {
+    return this.technicalServices.delete(id);
   }
 }

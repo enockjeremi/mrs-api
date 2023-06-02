@@ -1,43 +1,51 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFaultDto, UpdateFaultDto } from '../DTOS/faults.dto';
 import { Fault } from '../entities/fault.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class FaultsService {
-  private counterId = 1;
+  constructor(@InjectModel(Fault.name) private faultModel: Model<Fault>) {}
 
-  private faults: Fault[] = [
-    {
-      id: 1,
-      fault: 'No enciende.',
-      symptoms: 'Dejo de enecender de un momento a otro.',
-      diagnosis: 'Problemas con el sensor CKP',
-      solution: 'Cambiar el sensor CKP,',
-      kmCurrent: 80300,
-    },
-  ];
-
-  create(payload: CreateFaultDto) {
-    return payload;
-  }
-
-  findAll() {
-    return this.faults;
-  }
-
-  findOne(id: number) {
-    const fault = this.faults.find((fault) => fault.id == id);
-    if (!fault) {
-      throw new NotFoundException('fault not found.');
+  async create(payload: CreateFaultDto) {
+    try {
+      const newFault = new this.faultModel(payload);
+      return await newFault.save();
+    } catch (error) {
+      throw new NotFoundException('Error.');
     }
-    return fault;
   }
 
-  update(id: number, payload: UpdateFaultDto) {
-    return { id, payload };
+  async findAll() {
+    return await this.faultModel.find({}).exec();
   }
 
-  delete(id: number) {
-    return id;
+  async findOne(id: string) {
+    const oneFault = await this.faultModel.findById({ _id: id }).exec();
+    if (!oneFault) {
+      throw new NotFoundException('Fault not found.');
+    }
+    return oneFault;
+  }
+
+  async update(id: string, payload: UpdateFaultDto) {
+    const updateFault = await this.faultModel.findByIdAndUpdate(
+      { _id: id },
+      { $set: payload },
+      { new: true },
+    );
+    if (!updateFault) {
+      throw new NotFoundException('Fault not found.');
+    }
+    return updateFault;
+  }
+
+  async delete(id: string) {
+    const deleteFault = await this.findOne(id);
+    if (!deleteFault) {
+      throw new NotFoundException('Fault not Found.');
+    }
+    return this.faultModel.findByIdAndDelete({ _id: id });
   }
 }

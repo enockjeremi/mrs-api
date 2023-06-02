@@ -1,36 +1,36 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ParseIntPipe } from 'src/common/parse-int/parse-int.pipe';
 import { CreatePPUDto, UpdatePPUDto } from '../DTOS/ppus.dto';
 import { PpusService } from 'src/ppus/services/ppus.service';
+import { ApiTags } from '@nestjs/swagger';
+import { MongoIdPipe } from 'src/common/mongo-id/mongo-id.pipe';
 
+@ApiTags('PPUS')
 @Controller('ppus')
 export class PpusController {
   constructor(private services: PpusService) { }
 
   @Get()
   get() {
-    const response = this.services.findAll();
-    return { method: 'GET', data: response };
+    return this.services.findAll();
   }
   @Post()
   create(@Body() payload: CreatePPUDto) {
     const newPpu = this.services.create(payload);
-    return { method: 'POST', newPpu };
+    return newPpu;
   }
   @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: number) {
-    const response = this.services.findOne(id);
-    return { method: 'GET ID', data: response };
+  getOne(@Param('id', MongoIdPipe) id: string) {
+    const getPpu = this.services.findOne(id);
+    return getPpu;
   }
   @Put(':id')
-  update(@Param('id') id: string, @Body() payload: UpdatePPUDto) {
-    const updatePpu = this.services.update(+id, payload);
-    return { method: 'PUT', id, updatePpu };
-  }
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    const deletePpu = this.services.delete(+id);
-    return { method: 'DELETE', id, deletePpu };
-  }
+    update(@Param('id', MongoIdPipe) id: string, @Body() payload: UpdatePPUDto) {
+  const putPPU = this.services.update(id, payload);
+  return putPPU;
+}
+@Delete(':id')
+delete (@Param('id', MongoIdPipe) id: string) {
+  return this.services.delete(id);
+}
 }

@@ -1,28 +1,51 @@
-import { Injectable } from '@nestjs/common';
-import {
-  CreateTechnicalDto,
-  UpdateTechnicalDto,
-} from '../DTOS/technicals.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateTechnicalDto, UpdateTechnicalDto } from '../DTOS/technicals.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Technical } from '../entities/technical.entity';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class TechnicalsService {
-  create(payload: CreateTechnicalDto) {
-    return payload;
+  constructor(
+    @InjectModel(Technical.name) private technicalModel: Model<Technical>,
+  ) {}
+
+  async create(payload: CreateTechnicalDto) {
+    try {
+      const newTechnical = new this.technicalModel(payload);
+      return await newTechnical.save();
+    } catch (error) {
+      throw new NotFoundException('Not found');
+    }
   }
 
-  findAll() {
-    return true;
+  async findAll() {
+    return await this.technicalModel.find({});
   }
 
-  findOne(id: number) {
-    return id;
+  async findOne(id: string) {
+    const oneTechnical = await this.technicalModel.findById({ _id: id }).exec();
+    if (!oneTechnical) {
+      throw new NotFoundException('Technical not Found.');
+    }
+    return oneTechnical;
   }
 
-  update(id: number, payload: UpdateTechnicalDto) {
-    return { id, payload };
+  async update(id: string, payload: UpdateTechnicalDto) {
+    const updateTechnical = await this.technicalModel
+      .findByIdAndUpdate({ _id: id }, { $set: payload }, { new: true })
+      .exec();
+    if (!updateTechnical) {
+      throw new NotFoundException('Technical not Found.');
+    }
+    return updateTechnical;
   }
 
-  delete(id: number) {
-    return id;
+  async delete(id: string) {
+    const deleteTechnical = await this.findOne(id);
+    if (!deleteTechnical) {
+      throw new NotFoundException('Technical not Found.');
+    }
+    return await this.technicalModel.findByIdAndDelete({ _id: id }).exec();
   }
 }

@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/swagger';
 import { IsString, IsNumber, IsNotEmpty, IsPositive } from 'class-validator';
 
 export class CreatePPUDto {

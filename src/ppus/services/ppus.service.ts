@@ -1,78 +1,52 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePPUDto, UpdatePPUDto } from '../DTOS/ppus.dto';
 import { PPU } from 'src/ppus/entities/ppu.entity';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class PpusService {
-  private counterId = 4;
-  private ppus: PPU[] = [
-    {
-      id: 1,
-      ppu: 'XXWW20',
-      brand: 'Hyundai',
-      model: 'Santa Fe',
-      year: 2012,
-      kmInit: 143580,
-    },
-    {
-      id: 2,
-      ppu: 'MNSL12',
-      brand: 'Hyundai',
-      model: 'Tucson',
-      year: 2012,
-      kmInit: 143580,
-    },
-    {
-      id: 3,
-      ppu: 'WKLS30',
-      brand: 'Hyundai',
-      model: 'Veracruz',
-      year: 2012,
-      kmInit: 143580,
-    },
-  ];
+  constructor(@InjectModel(PPU.name) private ppuModel: Model<PPU>) {}
 
-  create(payload: CreatePPUDto) {
-    console.log(payload);
-    this.counterId = this.counterId + 1;
-    const newPpu = {
-      id: this.counterId,
-      ...payload,
-    };
-    this.ppus.push(newPpu);
-    return newPpu;
+  async create(payload: CreatePPUDto) {
+    try {
+      const newPpu = await new this.ppuModel(payload);
+      return await newPpu.save();
+    } catch (error) {
+      throw new BadRequestException('PPU must be unique.');
+    }
   }
 
-  findAll() {
-    return this.ppus;
+  async findAll() {
+    return await this.ppuModel.find({}).exec();
   }
 
-  findOne(id: number) {
-    const ppu = this.ppus.find((ppu) => ppu.id == id);
+  async findOne(id: string): Promise<PPU> {
+    const ppu = await this.ppuModel.findById({ _id: id }).exec();
     if (!ppu) {
       throw new NotFoundException('PPU not found.');
     }
     return ppu;
   }
 
-  update(id: number, payload: UpdatePPUDto) {
-    const item = this.findOne(id);
-    if (item) {
-      const index = this.ppus.findIndex((item) => item.id == id);
-      this.ppus[index] = {
-        ...item,
-        ...payload,
-      };
-      return this.ppus[index];
-    }
-    return null;
-  }
-  delete(id: number) {
-    const index = this.ppus.findIndex((item) => item.id == id);
-    if (index == -1) {
+  async update(id: string, payload: UpdatePPUDto) {
+    const ppu = await this.ppuModel
+      .findByIdAndUpdate({ _id: id }, { $set: payload }, { new: true })
+      .exec();
+    if (!ppu) {
       throw new NotFoundException('PPU not found.');
     }
-    this.ppus.splice(index, 1);
-    return true;
+    return ppu;
+  }
+  async delete(id: string) {
+    const ppu = await this.findOne(id);
+    if (!ppu) {
+      throw new NotFoundException('PPU not found.');
+    }
+    return await this.ppuModel.findByIdAndDelete({ _id: id }).exec();
   }
 }

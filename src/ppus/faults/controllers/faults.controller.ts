@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -13,7 +12,9 @@ import {
   UpdateFaultDto,
 } from 'src/ppus/faults/DTOS/faults.dto';
 import { FaultsService } from '../services/faults.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Faults')
 @Controller('faults')
 export class FaultsController {
   constructor(private services: FaultsService) {}
@@ -27,18 +28,15 @@ export class FaultsController {
     return this.services.create(payload);
   }
   @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: number) {
+  getOne(@Param('id') id: string) {
     return this.services.findOne(id);
   }
   @Put(':id')
-  update(
-    @Body() payload: UpdateFaultDto,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  update(@Body() payload: UpdateFaultDto, @Param('id') id: string) {
     return this.services.update(id, payload);
   }
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number) {
+  delete(@Param('id') id: string) {
     return this.services.delete(id);
   }
 }
