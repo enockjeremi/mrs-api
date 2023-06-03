@@ -4,7 +4,7 @@ import { IsString, IsNotEmpty } from 'class-validator';
 export class CreateCategoryDto {
   @IsNotEmpty()
   @IsString()
-  readonly category: string;
+  readonly name: string;
 }
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}

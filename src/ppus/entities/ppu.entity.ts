@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class PPU extends Document {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, index: true })
   ppu: string;
 
   @Prop()

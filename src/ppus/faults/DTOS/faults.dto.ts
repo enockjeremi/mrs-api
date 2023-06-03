@@ -1,5 +1,13 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsString, IsNumber, IsNotEmpty, IsPositive } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsNotEmpty,
+  IsPositive,
+  IsOptional,
+  Min,
+  IsMongoId,
+} from 'class-validator';
 
 export class CreateFaultDto {
   @IsNotEmpty()
@@ -22,6 +30,20 @@ export class CreateFaultDto {
   @IsPositive()
   @IsNumber()
   readonly kmCurrent: number;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  readonly category: string;
 }
 
 export class UpdateFaultDto extends PartialType(CreateFaultDto) {}
+
+export class FilterFaultDto {
+  @IsOptional()
+  @IsPositive()
+  limit: number;
+
+  @IsOptional()
+  @Min(0)
+  offset: number;
+}

@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateFaultDto, UpdateFaultDto } from '../DTOS/faults.dto';
+import {
+  CreateFaultDto,
+  FilterFaultDto,
+  UpdateFaultDto,
+} from '../DTOS/faults.dto';
 import { Fault } from '../entities/fault.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -17,12 +21,26 @@ export class FaultsService {
     }
   }
 
-  async findAll() {
-    return await this.faultModel.find({}).exec();
+  async findAll(params?: FilterFaultDto) {
+    if (params) {
+      const { limit, offset } = params;
+      if (limit && offset) {
+        return await this.faultModel
+          .find()
+          .populate('category')
+          .skip(offset)
+          .limit(limit)
+          .exec();
+      }
+    }
+    return await this.faultModel.find().populate('category').exec();
   }
 
   async findOne(id: string) {
-    const oneFault = await this.faultModel.findById({ _id: id }).exec();
+    const oneFault = await this.faultModel
+      .findById({ _id: id })
+      .populate('category')
+      .exec();
     if (!oneFault) {
       throw new NotFoundException('Fault not found.');
     }

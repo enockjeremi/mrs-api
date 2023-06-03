@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreatePPUDto, UpdatePPUDto } from '../DTOS/ppus.dto';
+import { CreatePPUDto, FilterPPUDto, UpdatePPUDto } from '../DTOS/ppus.dto';
 import { PPU } from 'src/ppus/entities/ppu.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,15 +13,21 @@ export class PpusService {
   constructor(@InjectModel(PPU.name) private ppuModel: Model<PPU>) {}
 
   async create(payload: CreatePPUDto) {
-    try {
-      const newPpu = await new this.ppuModel(payload);
-      return await newPpu.save();
-    } catch (error) {
-      throw new BadRequestException('PPU must be unique.');
-    }
+    const ppu = payload.ppu;
+    const findPPU = await this.ppuModel.find({ ppu }).exec();
+    if (findPPU.length > 0)
+      throw new BadRequestException('PPU must be unique!');
+    const newPpu = new this.ppuModel(payload);
+    return await newPpu.save();
   }
 
-  async findAll() {
+  async findAll(params?: FilterPPUDto) {
+    if (params) {
+      const { ppu } = params;
+      if (ppu) {
+        return await this.ppuModel.find({ ppu }).exec();
+      }
+    }
     return await this.ppuModel.find({}).exec();
   }
 

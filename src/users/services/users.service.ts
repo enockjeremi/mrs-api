@@ -1,27 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../DTOS/users.dto';
-import { FaultsService } from 'src/ppus/faults/services/faults.service';
 import { User } from '../entities/users.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private faultsService: FaultsService,
-    @InjectModel(User.name) private userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async create(payload: CreateUserDto) {
-    try {
-      const newUser = new this.userModel(payload);
-      return await newUser.save();
-    } catch (error) {
-      throw new NotFoundException('Not Found!');
-    }
+    const email = payload.email;
+    const findEmail = await this.userModel.find({ email }).exec();
+
+    if (findEmail.length > 0)
+      throw new BadRequestException('Email must be unique!');
+
+    const newUser = new this.userModel(payload);
+    return await newUser.save();
   }
+
   async findAll() {
-    return await this.userModel.find({});
+    return await this.userModel.find({}).populate('technical').exec();
   }
 
   async findOne(id: string) {

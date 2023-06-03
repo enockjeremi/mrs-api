@@ -7,10 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import {
-  CreateCategoryDto,
-  UpdateCategoryDto,
-} from 'src/ppus/faults/DTOS/categories.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from '../DTOS/categories.dto';
 import { CategoriesService } from '../services/categories.service';
 import { ApiTags } from '@nestjs/swagger';
 

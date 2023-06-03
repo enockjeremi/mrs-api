@@ -1,5 +1,6 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+import { Category } from './category.entity';
 
 @Schema()
 export class Fault extends Document {
@@ -17,6 +18,9 @@ export class Fault extends Document {
 
   @Prop({ type: Number, required: true })
   kmCurrent: number;
+
+  @Prop({ type: Types.ObjectId, ref: Category.name })
+  category: Category | Types.ObjectId;
 }
 
 export const FaultSchema = SchemaFactory.createForClass(Fault);

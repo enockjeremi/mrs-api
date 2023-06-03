@@ -1,5 +1,11 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsString, IsNumber, IsNotEmpty, IsPositive } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsNotEmpty,
+  IsPositive,
+  IsOptional,
+} from 'class-validator';
 
 export class CreatePPUDto {
   @IsNotEmpty()
@@ -26,3 +32,8 @@ export class CreatePPUDto {
 }
 
 export class UpdatePPUDto extends PartialType(CreatePPUDto) {}
+
+export class FilterPPUDto {
+  @IsOptional()
+  ppu: string;
+}

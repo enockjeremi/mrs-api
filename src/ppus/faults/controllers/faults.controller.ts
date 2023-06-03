@@ -6,11 +6,13 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   CreateFaultDto,
+  FilterFaultDto,
   UpdateFaultDto,
-} from 'src/ppus/faults/DTOS/faults.dto';
+} from '../../faults/DTOS/faults.dto';
 import { FaultsService } from '../services/faults.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -20,8 +22,8 @@ export class FaultsController {
   constructor(private services: FaultsService) {}
 
   @Get()
-  get() {
-    return this.services.findAll();
+  get(@Query() params: FilterFaultDto) {
+    return this.services.findAll(params);
   }
   @Post()
   create(@Body() payload: CreateFaultDto) {
